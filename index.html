@@ -50,28 +50,41 @@
   <div id="thumbnails" style="margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center;"></div>
 
   <!-- Flipbook JS -->
-  <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
-  <script>
-    const images = [
-      "wien-energie-jahrbuch-2017-01.jpg",
-      "wien-energie-jahrbuch-2017-02.jpg",
-      "wien-energie-jahrbuch-2017-03.jpg",
-      "wien-energie-jahrbuch-2017-04.jpg",
-      "wien-energie-jahrbuch-2017-05.jpg",
-      "wien-energie-jahrbuch-2017-06.jpg",
-      "wien-energie-jahrbuch-2017-07.jpg",
-      "wien-energie-jahrbuch-2017-08.jpg",
-      "wien-energie-jahrbuch-2017-09.jpg",
-      "wien-energie-jahrbuch-2017-10.jpg",
-      "wien-energie-jahrbuch-2017-11.jpg",
-      "wien-energie-jahrbuch-2017-12.jpg",
-      "wien-energie-jahrbuch-2017-13.jpg",
-      "wien-energie-jahrbuch-2017-14.jpg"
-    ];
+ <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
+<script>
+  const images = [
+    "wien-energie-jahrbuch-2017-01.jpg",
+    "wien-energie-jahrbuch-2017-02.jpg",
+    "wien-energie-jahrbuch-2017-03.jpg",
+    "wien-energie-jahrbuch-2017-04.jpg",
+    "wien-energie-jahrbuch-2017-05.jpg",
+    "wien-energie-jahrbuch-2017-06.jpg",
+    "wien-energie-jahrbuch-2017-07.jpg",
+    "wien-energie-jahrbuch-2017-08.jpg",
+    "wien-energie-jahrbuch-2017-09.jpg",
+    "wien-energie-jahrbuch-2017-10.jpg",
+    "wien-energie-jahrbuch-2017-11.jpg",
+    "wien-energie-jahrbuch-2017-12.jpg",
+    "wien-energie-jahrbuch-2017-13.jpg",
+    "wien-energie-jahrbuch-2017-14.jpg"
+  ];
 
-    const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
-      width: 800,
-      height: 600,
+  const firstImage = new Image();
+  firstImage.src = images[0];
+
+  firstImage.onload = () => {
+    const aspectRatio = firstImage.naturalWidth / firstImage.naturalHeight;
+    const maxHeight = 600;
+    const maxWidth = Math.round(maxHeight * aspectRatio);
+
+    // Flipbook-Container dynamisch erstellen
+    const flipbookContainer = document.getElementById("flipbook");
+    flipbookContainer.style.width = maxWidth + "px";
+    flipbookContainer.style.height = maxHeight + "px";
+
+    window.pageFlip = new St.PageFlip(flipbookContainer, {
+      width: maxWidth,
+      height: maxHeight,
       size: "fixed",
       showCover: true,
       flippingTime: 700,
@@ -84,16 +97,16 @@
 
     // Zoomfunktion
     let zoom = 1.0;
-    function zoomIn() {
+    window.zoomIn = function () {
       zoom = Math.min(zoom + 0.1, 2.0);
       document.getElementById("flipbook-wrapper").style.transform = `scale(${zoom})`;
-    }
-    function zoomOut() {
+    };
+    window.zoomOut = function () {
       zoom = Math.max(zoom - 0.1, 0.5);
       document.getElementById("flipbook-wrapper").style.transform = `scale(${zoom})`;
-    }
+    };
 
-    // Thumbnails Navigation
+    // Thumbnails
     const thumbs = document.getElementById("thumbnails");
     images.forEach((src, index) => {
       const img = document.createElement("img");
@@ -102,6 +115,7 @@
       img.onclick = () => pageFlip.turnToPage(index);
       thumbs.appendChild(img);
     });
-  </script>
+  };
+</script>
 </body>
 </html>
