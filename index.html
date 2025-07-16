@@ -1,72 +1,53 @@
+<script>
+  const images = [
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-01.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-02.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-03.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-04.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-05.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-06.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-07.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-08.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-09.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-10.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-11.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-12.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-13.jpg",
+    "https://www.egger-lerch.at/sites/default/files/wien-energie-jahrbuch-2017-14.jpg"
+  ];
 
-<!DOCTYPE html>
-<html lang="de">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Wien Energie Jahrbuch 2017</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip/dist/css/page-flip.min.css" />
-  <style>
-    body { font-family: sans-serif; background: #f4f4f4; margin: 20px; }
-    #flipbook-wrapper { transform-origin: top center; transition: transform 0.3s; display: inline-block; }
-    #thumbnails img { border: 1px solid #ccc; }
-  </style>
-</head>
-<body>
-  <div style="text-align:center; margin-bottom: 10px;">
-    <button onclick="pageFlip.flipPrev()">⬅️ Zurück</button>
-    <button onclick="zoomIn()">🔍 Zoom +</button>
-    <button onclick="zoomOut()">🔎 Zoom -</button>
-    <button onclick="pageFlip.flipNext()">Weiter ➡️</button>
-  </div>
+  const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
+    width: 800,
+    height: 600,
+    size: "fixed",
+    showCover: true,
+    flippingTime: 700,
+    maxShadowOpacity: 0.4,
+    mobileScrollSupport: true
+  });
 
-  <div style="overflow: hidden; text-align: center;">
-    <div id="flipbook-wrapper">
-      <div id="flipbook" style="width: 800px; height: 600px;"></div>
-    </div>
-  </div>
+  pageFlip.loadFromImages(images); // ✅ DAS ist die richtige Verwendung!
 
-  <div id="thumbnails" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 5px; margin-top: 20px;"></div>
+  // Zoomsteuerung
+  let zoom = 1.0;
+  function zoomIn() {
+    zoom = Math.min(zoom + 0.1, 2.0);
+    document.getElementById("flipbook-wrapper").style.transform = `scale(${zoom})`;
+  }
+  function zoomOut() {
+    zoom = Math.max(zoom - 0.1, 0.5);
+    document.getElementById("flipbook-wrapper").style.transform = `scale(${zoom})`;
+  }
 
-  <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
-  <script>
-    const images = [...Array(14).keys()].map(i => {
-      const num = String(i + 1).padStart(2, '0');
-      return `wien-energie-jahrbuch-2017-${num}.jpg`;
-    });
-
-    const pageFlip = new St.PageFlip(document.getElementById("flipbook"), {
-      width: 800,
-      height: 600,
-      size: "fixed",
-      showCover: true,
-      flippingTime: 700,
-      maxShadowOpacity: 0.4,
-      mobileScrollSupport: true
-    });
-
-    pageFlip.loadFromImages(images.map(src => ({ src, interactive: false })));
-
-    let zoom = 1.0;
-    function zoomIn() {
-      zoom = Math.min(zoom + 0.1, 2.0);
-      document.getElementById("flipbook-wrapper").style.transform = `scale(${zoom})`;
-    }
-    function zoomOut() {
-      zoom = Math.max(zoom - 0.1, 0.5);
-      document.getElementById("flipbook-wrapper").style.transform = `scale(${zoom})`;
-    }
-
-    const thumbs = document.getElementById("thumbnails");
-    images.forEach((url, i) => {
-      const img = document.createElement("img");
-      img.src = url;
-      img.style.width = "60px";
-      img.style.cursor = "pointer";
-      img.title = `Seite ${i + 1}`;
-      img.onclick = () => pageFlip.turnToPage(i);
-      thumbs.appendChild(img);
-    });
-  </script>
-</body>
-</html>
+  // Thumbnails zur Navigation
+  const thumbs = document.getElementById("thumbnails");
+  images.forEach((url, i) => {
+    const img = document.createElement("img");
+    img.src = url;
+    img.style.width = "60px";
+    img.style.cursor = "pointer";
+    img.title = `Seite ${i + 1}`;
+    img.onclick = () => pageFlip.turnToPage(i);
+    thumbs.appendChild(img);
+  });
+</script>
