@@ -1,42 +1,154 @@
-<style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    font-family: sans-serif;
-    background: #f5f5f5;
-    text-align: center;
-  }
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Flipbook Wien Energie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  #flipbook-wrapper {
-    display: inline-block;
-    transform-origin: top center;
-    transition: transform 0.3s;
-    max-width: 100%;
-    overflow: hidden;
-  }
+  <!-- Flipbook CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/page-flip/dist/css/page-flip.min.css" />
 
-  #flipbook {
-    width: 100%;
-    height: auto;
-    max-width: 100%;
-    margin: 0 auto;
-  }
-
-  #thumbnails img {
-    width: 60px;
-    margin: 4px;
-    cursor: pointer;
-    border: 1px solid #ccc;
-    transition: 0.2s;
-  }
-
-  #thumbnails img:hover {
-    border-color: #333;
-  }
-
-  @media (max-width: 600px) {
-    #thumbnails img {
-      width: 40px;
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      font-family: sans-serif;
+      background: #f5f5f5;
+      text-align: center;
     }
-  }
-</style>
+
+    #flipbook-wrapper {
+      display: inline-block;
+      transform-origin: top center;
+      transition: transform 0.3s;
+      max-width: 100%;
+      overflow: hidden;
+    }
+
+    #flipbook {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      margin: 0 auto;
+    }
+
+    #thumbnails img {
+      width: 60px;
+      margin: 4px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      transition: 0.2s;
+    }
+
+    #thumbnails img:hover {
+      border-color: #333;
+    }
+
+    @media (max-width: 600px) {
+      #thumbnails img {
+        width: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Steuerung -->
+  <div style="margin: 20px;">
+    <button onclick="pageFlip.flipPrev()">⬅️ Zurück</button>
+    <button onclick="zoomIn()">🔍 Zoom +</button>
+    <button onclick="zoomOut()">🔎 Zoom -</button>
+    <button onclick="pageFlip.flipNext()">Weiter ➡️</button>
+  </div>
+
+  <!-- Flipbook -->
+  <div id="flipbook-wrapper">
+    <div id="flipbook"></div>
+  </div>
+
+  <!-- Thumbnails -->
+  <div id="thumbnails" style="margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center;"></div>
+
+  <!-- Flipbook JS -->
+  <script src="https://cdn.jsdelivr.net/npm/page-flip/dist/js/page-flip.browser.min.js"></script>
+  <script>
+    const images = [
+      "wien-energie-jahrbuch-2017-01.jpg",
+      "wien-energie-jahrbuch-2017-02.jpg",
+      "wien-energie-jahrbuch-2017-03.jpg",
+      "wien-energie-jahrbuch-2017-04.jpg",
+      "wien-energie-jahrbuch-2017-05.jpg",
+      "wien-energie-jahrbuch-2017-06.jpg",
+      "wien-energie-jahrbuch-2017-07.jpg",
+      "wien-energie-jahrbuch-2017-08.jpg",
+      "wien-energie-jahrbuch-2017-09.jpg",
+      "wien-energie-jahrbuch-2017-10.jpg",
+      "wien-energie-jahrbuch-2017-11.jpg",
+      "wien-energie-jahrbuch-2017-12.jpg",
+      "wien-energie-jahrbuch-2017-13.jpg",
+      "wien-energie-jahrbuch-2017-14.jpg"
+    ];
+
+    const firstImage = new Image();
+    firstImage.src = images[0];
+
+    firstImage.onload = () => {
+      const aspectRatio = firstImage.naturalWidth / firstImage.naturalHeight;
+
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      const maxSpreadWidth = Math.min(viewportWidth * 0.9, 1000); // max spread width
+      const maxPageHeight = viewportHeight * 0.6;
+
+      let spreadHeight = maxPageHeight;
+      let pageWidth = spreadHeight * aspectRatio;
+      let spreadWidth = pageWidth * 2;
+
+      if (spreadWidth > maxSpreadWidth) {
+        spreadWidth = maxSpreadWidth;
+        pageWidth = spreadWidth / 2;
+        spreadHeight = pageWidth / aspectRatio;
+      }
+
+      const flipbookContainer = document.getElementById("flipbook");
+      flipbookContainer.style.width = spreadWidth + "px";
+      flipbookContainer.style.height = spreadHeight + "px";
+
+      window.pageFlip = new St.PageFlip(flipbookContainer, {
+        width: pageWidth,
+        height: spreadHeight,
+        size: "fixed",
+        showCover: true, // 👈 wichtig für Einzelseite am Anfang
+        flippingTime: 700,
+        maxShadowOpacity: 0.4,
+        mobileScrollSupport: true,
+        useMouseEvents: true
+      });
+
+      pageFlip.loadFromImages(images);
+
+      // Zoom
+      let zoom = 1.0;
+      window.zoomIn = function () {
+        zoom = Math.min(zoom + 0.1, 2.0);
+        document.getElementById("flipbook-wrapper").style.transform = `scale(${zoom})`;
+      };
+      window.zoomOut = function () {
+        zoom = Math.max(zoom - 0.1, 0.5);
+        document.getElementById("flipbook-wrapper").style.transform = `scale(${zoom})`;
+      };
+
+      // Thumbnails
+      const thumbs = document.getElementById("thumbnails");
+      images.forEach((src, index) => {
+        const img = document.createElement("img");
+        img.src = src;
+        img.alt = `Seite ${index + 1}`;
+        img.onclick = () => pageFlip.turnToPage(index);
+        thumbs.appendChild(img);
+      });
+    };
+  </script>
+</body>
+</html>
